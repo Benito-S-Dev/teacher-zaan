@@ -1,0 +1,16 @@
+node_modules
+.next
+.git
+.env*
+data
+*.sqlite*
+*.tsbuildinfo
+tests
+docs
+.runtime
+LOCAL_SETUP.md
+local-preview.png
+*.tar.gz
+local-*.log
+deployment-*.log
+data-*

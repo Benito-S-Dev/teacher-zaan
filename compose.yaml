@@ -1,0 +1,15 @@
+services:
+  matrona:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      DATA_DIR: /app/data
+      COOKIE_SECURE: "false"
+    env_file:
+      - .env.local
+    volumes:
+      - matrona-data:/app/data
+    restart: unless-stopped
+volumes:
+  matrona-data:

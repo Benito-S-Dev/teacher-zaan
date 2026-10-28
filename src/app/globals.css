@@ -1,0 +1,111 @@
+@import "tailwindcss";
+:root {color-scheme:light;}
+* {box-sizing:border-box;}
+body {margin:0;background:#fafafa;color:#222;font-family:Arial,Helvetica,sans-serif;-webkit-font-smoothing:antialiased;}
+button:not(:disabled),a {cursor:pointer;}
+button:focus-visible,a:focus-visible,.table-scroll:focus-visible {outline:2px solid #047857;outline-offset:3px;}
+.schedule-page {max-width:1500px;margin:auto;padding:22px 30px;}
+.toolbar {display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:20px;}
+.brand {font-size:17px;font-weight:700;white-space:nowrap;}
+.brand span {font-weight:400;font-size:12px;color:#777;}
+.toolbar-actions {display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end;}
+.schedule-sheet {background:white;border:1px solid #999;padding:22px 18px 12px;}
+.schedule-sheet h1 {text-align:center;font-size:clamp(25px,3.5vw,42px);font-weight:600;letter-spacing:-1px;line-height:1.15;margin:0 0 8px;}
+.sheet-subtitle {text-align:center;font-size:12px;color:#777;margin-bottom:22px;}
+.table-scroll {overflow-x:auto;}
+.schedule-table {width:100%;min-width:640px;table-layout:fixed;border-collapse:collapse;border:1px solid #aaa;}
+.schedule-table th,.schedule-table td {border:1px solid #b8b8b8;}
+.schedule-table thead th {height:40px;font-size:14px;font-weight:500;background:white;}
+.schedule-table .time-heading {width:132px;font-size:11px;}
+.schedule-table tbody tr:nth-child(even) {background:#f2f2f2;}
+.schedule-table .time-cell {height:39px;font-size:11px;font-weight:400;font-variant-numeric:tabular-nums;text-align:center;white-space:nowrap;}
+.schedule-cell {display:flex;min-height:39px;width:100%;height:100%;padding:5px 8px;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:12px;}
+.schedule-cell:not(:disabled):hover {background:#00000009;box-shadow:inset 0 0 0 1px #555;}
+.cell-name {max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.cell-status {font-size:9px;opacity:.8;}
+.status-AVAILABLE {background:#d9f3df;color:#186534;box-shadow:inset 3px 0 #22c55e;}
+.status-BOOKED {background:#ffe0e0;color:#9b2424;box-shadow:inset 3px 0 #ef4444;}
+.status-BREAK {background:#ffebd2;color:#9a4c11;box-shadow:inset 3px 0 #f97316;}
+.status-CATCHUP {background:#dfeaff;color:#254f9a;box-shadow:inset 3px 0 #3b82f6;}
+.status-BLOCKED {background:#b91c1c;color:#fff;}
+.dot-BLOCKED {background:#b91c1c;}
+.sheet-footer {display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:13px;font-size:10px;color:#777;flex-wrap:wrap;}
+.legend {display:flex;gap:14px;flex-wrap:wrap;}
+.legend span {display:flex;align-items:center;gap:5px;}
+.legend i {width:8px;height:8px;display:inline-block;}
+.dot-AVAILABLE {background:#22c55e;}.dot-BOOKED {background:#ef4444;}.dot-BREAK {background:#f97316;}.dot-CATCHUP {background:#3b82f6;}
+.page-footer {display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:13px;font-size:10px;color:#888;}
+.message {display:flex;justify-content:space-between;gap:14px;padding:12px 15px;margin-bottom:15px;border:1px solid;font-size:13px;}
+.success {background:#effaf2;border-color:#b6d9c0;color:#245d37;}.failure {background:#fff2f2;border-color:#e6b6b6;color:#a22;}
+.field {display:block;width:100%;border:1px solid #ccc;border-radius:6px;padding:10px 12px;margin-top:7px;background:white;color:#222;outline-color:#047857;font-size:16px;}
+label {font-size:13px;font-weight:600;}
+@media(max-width:900px) {.schedule-page {padding:14px 10px;}.toolbar {align-items:flex-start;gap:8px;flex-direction:column;}.toolbar-actions {width:100%;justify-content:flex-start;gap:5px;}.brand {font-size:15px;}.schedule-sheet {padding:20px 8px 12px;}.schedule-table .time-heading {width:100px;}.schedule-table .time-cell span {display:none;}.schedule-table thead th {font-size:12px;}.schedule-table th:first-child {position:sticky;left:0;z-index:1;background:white;}.schedule-table tbody tr:nth-child(even) th:first-child {background:#f2f2f2;}.sheet-subtitle {font-size:11px;}.button-label {display:none;}}
+@media print {@page {size:A4 landscape;margin:10mm;}body {background:white;}.schedule-page {padding:0;max-width:none;}.toolbar,.message,.sheet-subtitle,.page-footer,[role=dialog] {display:none!important;}.schedule-sheet {padding:12px;}.schedule-sheet h1 {font-size:28px;margin-bottom:18px;}.table-scroll {overflow:visible;}.schedule-table {min-width:0;}.schedule-table .time-cell,.schedule-cell {min-height:25px;height:25px;}.schedule-table .time-cell span {display:inline;}.schedule-table {print-color-adjust:exact;-webkit-print-color-adjust:exact;}}
+@media(prefers-reduced-motion:reduce) {* {transition:none!important;animation:none!important;}}
+
+.timezone-bar {display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;margin:0 0 18px;font-size:12px;}
+.timezone-bar label {font-size:12px;font-weight:400;color:#666;}
+.timezone-bar select {padding:8px 28px 8px 10px;border:1px solid #bbb;border-radius:5px;background:white;font-size:13px;color:#222;}
+.timezone-note {font-size:11px;color:#777;}
+.heading-zone {display:block;font-size:9px;color:#777;margin-top:3px;}
+@media print {.timezone-bar {display:none;}}
+
+.teacher-name {text-align:center;font-size:15px;font-weight:500;margin:0 0 10px;color:#555;}
+
+.admin-tabs {display:flex;gap:6px;flex-wrap:wrap;border-bottom:1px solid #ddd;margin:2px 0 24px;padding-bottom:10px;}
+.admin-tabs button {padding:10px 16px;border-radius:7px;font-size:14px;color:#555;font-weight:600;}
+.admin-tabs button:hover {background:#eee;}
+.admin-tabs button[aria-current=page] {background:#173f35;color:white;}
+.register-panel {max-width:1200px;margin:auto;}
+.register-heading {display:flex;justify-content:space-between;gap:20px;align-items:center;margin:24px 0;}
+.register-heading h1 {font-size:30px;font-weight:700;letter-spacing:-.7px;margin:5px 0;}
+.register-heading p:not(.register-eyebrow) {color:#666;font-size:14px;line-height:1.6;max-width:700px;}
+.register-eyebrow {font-size:10px;color:#397361;letter-spacing:1.5px;font-weight:700;}
+.register-start-note {padding:12px 16px;border:1px solid #dbe6df;border-radius:8px;background:#f2f7f3;font-size:12px;color:#476154;line-height:1.7;margin:16px 0;}
+.register-filters {display:flex;gap:14px;align-items:flex-end;flex-wrap:wrap;margin:22px 0;}
+.register-filters label {min-width:150px;flex:1;}
+.register-filters .field {font-size:14px;min-height:42px;}
+.report-period {display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin:24px 0 16px;font-size:17px;}
+.report-period span {font-size:12px;color:#666;}
+.register-stats {display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:16px 0;}
+.register-stats>div {padding:20px;background:white;border:1px solid #dedede;border-radius:10px;display:flex;flex-direction:column;gap:6px;}
+.register-stats strong {font-size:30px;line-height:1.1;font-weight:700;}
+.register-stats span {font-size:12px;color:#666;}
+.register-stats .stat-billable {background:#edf6f1;border-color:#b5d7c3;color:#173f35;}
+.register-muted {font-size:12px;color:#777;line-height:1.7;margin:12px 0;}
+.register-empty {text-align:center;padding:44px 24px;background:white;border:1px dashed #cdd6d0;border-radius:10px;color:#666;font-size:14px;margin:20px 0;}
+.register-empty h2 {font-weight:600;color:#333;font-size:18px;margin-bottom:8px;}
+.register-empty p {max-width:550px;margin:auto;line-height:1.8;}
+.lesson-list {border:1px solid #ddd;border-radius:10px;overflow:hidden;background:white;margin:20px 0;}
+.lesson-list:empty {display:none;}
+.lesson-row {display:grid;grid-template-columns:170px 1fr 210px 55px;align-items:center;gap:18px;text-align:left;padding:17px 20px;width:100%;border-bottom:1px solid #eee;font-size:14px;}
+.lesson-row:last-child {border-bottom:0;}
+.lesson-row:hover {background:#f5f8f6;}
+.lesson-row>span {display:flex;flex-direction:column;gap:5px;}
+.lesson-row span span:not(.attendance-pill) {color:#777;font-size:11px;}
+.lesson-edit {font-size:12px;color:#397361;}
+.attendance-pill {font-size:11px;border-radius:5px;background:#eee;color:#555;padding:4px 8px;align-self:flex-start;}
+.attendance-COMPLETED {background:#e3f4e9;color:#24653a;}.attendance-ABSENT {background:#fff0d9;color:#945c14;}.attendance-CANCELLED {background:#f8e6e6;color:#973939;}.attendance-RESCHEDULED {background:#e8edfa;color:#3d5599;}
+.student-cards {display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin:20px 0;}
+.student-card {padding:20px;border:1px solid #ddd;border-radius:10px;background:white;display:flex;align-items:center;justify-content:space-between;gap:12px;}
+.student-card h2 {font-size:17px;font-weight:600;}.student-card p {font-size:12px;color:#666;margin:5px 0;}.student-card small {font-size:11px;color:#777;}
+.assignment-badge {display:block;width:fit-content;font-size:10px;background:#fff0d9;color:#945c14;border-radius:4px;padding:4px 7px;margin-top:8px;}
+.student-report {margin:12px 0;border:1px solid #ddd;border-radius:9px;background:white;overflow:hidden;}
+.student-report summary {cursor:pointer;padding:18px 20px;display:flex;justify-content:space-between;gap:16px;font-size:13px;list-style:revert;}
+.student-report summary small {display:block;font-size:11px;color:#777;margin-top:4px;}
+.student-report .lesson-list {margin:0;border:0;border-radius:0;border-top:1px solid #eee;}
+.billing-choice {display:flex;gap:12px;align-items:center;padding:14px;background:#edf6f1;border-radius:8px;}
+.billing-choice input {width:19px;height:19px;accent-color:#173f35;}
+.history-toggle {font-size:12px;color:#397361;text-decoration:underline;margin-top:22px;}
+.lesson-history {border-top:1px solid #ddd;margin-top:12px;}
+.lesson-history>div {display:flex;flex-direction:column;gap:5px;border-bottom:1px solid #eee;padding:12px 0;font-size:12px;}
+.lesson-history span,.lesson-history small {font-size:11px;color:#777;line-height:1.6;}
+@media(max-width:700px) {
+ .admin-tabs {gap:2px;}.admin-tabs button {padding:9px 10px;font-size:12px;}
+ .register-heading {align-items:flex-start;}.register-heading h1 {font-size:25px;}
+ .register-stats {grid-template-columns:repeat(2,1fr);}.register-stats>div {padding:16px;}
+ .student-cards {grid-template-columns:1fr;}
+ .lesson-row {grid-template-columns:95px 1fr;gap:10px;padding:14px;}.lesson-outcome {grid-column:2;}.lesson-edit {grid-column:1;grid-row:2;}
+ .student-report summary {flex-direction:column;gap:8px;}
+}
+@media print {.admin-tabs,.register-filters,.register-heading>button,.lesson-edit {display:none!important;}.register-panel {max-width:none;}.student-report,.lesson-row {break-inside:avoid;}.register-stats {grid-template-columns:repeat(4,1fr);}}

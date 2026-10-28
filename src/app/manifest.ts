@@ -1,0 +1,2 @@
+import type { MetadataRoute } from 'next';
+export default function manifest(): MetadataRoute.Manifest { return { name: 'Teacher Zaan Teaching Schedule', short_name: 'Teacher Zaan', description: 'Your permanent weekly teaching board', start_url: '/', scope: '/', display: 'standalone', background_color: '#f8faf9', theme_color: '#047857', icons: [192, 512].map(size => ({ src: `/api/icon?size=${size}`, sizes: `${size}x${size}`, type: 'image/png', purpose: 'any' })) }; }

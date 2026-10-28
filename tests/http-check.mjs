@@ -1,0 +1,53 @@
+import assert from 'node:assert/strict';
+import { scryptSync } from 'node:crypto';
+const TEST_PASSWORD='test-only-passphrase';
+const TEST_HASH=scryptSync(TEST_PASSWORD,'matrona-local-login-v1',64).toString('hex');
+import { spawn } from 'node:child_process';
+import { createRequire } from 'node:module';
+import { mkdtempSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+const require=createRequire(import.meta.url);
+const base='http://localhost:3001';
+const data=mkdtempSync(join(tmpdir(),'matrona-http-'));
+const child=spawn(process.execPath,[require.resolve('next/dist/bin/next'),'start','-p','3001'],{env:{...process.env,DATA_DIR:data,COOKIE_SECURE:'false',ADMIN_USERNAME:'test-teacher',ADMIN_PASSWORD_HASH:TEST_HASH},stdio:'pipe'});
+let logs='';child.stdout.on('data',b=>logs+=b);child.stderr.on('data',b=>logs+=b);
+async function post(path,body,cookie='',origin=base) {return fetch(base+'/api/'+path,{method:'POST',headers:{Origin:origin,'Content-Type':'application/json',Cookie:cookie},body:JSON.stringify(body)});}
+try {
+ let up=false;for(let i=0;i<60;i++){try{if((await fetch(base+'/api/session')).ok){up=true;break;}}catch{}await new Promise(resolve=>setTimeout(resolve,500));}
+ assert.ok(up,logs);
+ assert.equal((await fetch(base+'/api/admin')).status,401);
+ assert.equal((await fetch(base+'/api/register')).status,401);
+ assert.equal((await fetch(base+'/api/lesson-history?id=private')).status,401);
+ for(const path of ['students','companies','lessons','reschedule']) assert.equal((await post(path,{})).status,401);
+ assert.equal((await post('slots',{status:'BOOKED'})).status,401);
+ assert.equal((await post('login',{username:'test-teacher',password:TEST_PASSWORD},'','https://external.example')).status,403);
+ assert.equal((await post('login',{username:'test-teacher',password:'incorrect'})).status,401);
+ const login=await post('login',{username:'test-teacher',password:TEST_PASSWORD});assert.equal(login.status,200);
+ const cookie=login.headers.get('set-cookie').split(';')[0];assert.match(login.headers.get('set-cookie'),/HttpOnly/i);
+ const register=await fetch(base+'/api/register?from=2026-10-01&to=2026-10-31',{headers:{Cookie:cookie}});
+ assert.equal(register.status,200);
+ assert.deepEqual((await register.json()).companies.map(c=>c.name),['Carrie','Karin','Private']);
+ assert.equal((await post('companies',{name:'No CSRF',cycle_day:1},cookie,'https://external.example')).status,403);
+ let admin=await (await fetch(base+'/api/admin',{headers:{Cookie:cookie}})).json();
+ assert.equal(admin.slots.length,100);const slot=admin.slots[0];
+ assert.equal((await post('slots',{...slot,status:'BLOCKED'})).status,401);
+ assert.equal((await post('slots',{...slot,status:'BLOCKED'},cookie)).status,200);
+ assert.equal((await post('requests',{slot_id:slot.id,requester_name:'Blocked test'})).status,409);
+ const blockedPublic=await (await fetch(base+'/api/schedule')).json();
+ assert.equal(blockedPublic.slots[0].status,'BOOKED');
+ admin=await (await fetch(base+'/api/admin',{headers:{Cookie:cookie}})).json();
+ assert.equal(admin.slots[0].status,'BLOCKED');
+ slot.updated_at=admin.slots[0].updated_at;
+ assert.equal((await post('slots',{...slot,status:'BOOKED',student_name:'PRIVATE_TEST_NAME'},cookie)).status,200);
+ const publicData=await (await fetch(base+'/api/schedule',{headers:{Cookie:cookie}})).text();assert.ok(!publicData.includes('PRIVATE_TEST_NAME'));assert.ok(!publicData.includes('student_name'));
+ assert.equal((await post('slots',{...slot,status:'BREAK'},cookie)).status,409);
+ admin=await (await fetch(base+'/api/admin',{headers:{Cookie:cookie}})).json();
+ assert.equal((await post('slots',{...admin.slots[0],status:'AVAILABLE',student_name:''},cookie)).status,200);
+ assert.equal((await post('requests',{slot_id:slot.id,requester_name:'Test agency'})).status,201);
+ admin=await (await fetch(base+'/api/admin',{headers:{Cookie:cookie}})).json();assert.equal(admin.requests.length,1);
+ assert.equal((await post('review',{id:admin.requests[0].id},cookie)).status,200);
+ assert.equal((await post('logout',{},cookie)).status,200);
+ assert.equal((await fetch(base+'/api/admin',{headers:{Cookie:cookie}})).status,401);
+ console.log('HTTP integration passed: login, CSRF, authorization, editing, privacy, conflicts, requests, review and logout.');
+} finally {child.kill();}
