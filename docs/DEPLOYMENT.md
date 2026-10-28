@@ -39,7 +39,7 @@ For systemd, build in a staged release on the target architecture, keep the data
 1. Run tests, TypeScript, build and HTTP integration.
 2. Use SQLite's online backup API. Copying only a live database file can omit WAL changes.
 3. Stage source and Linux dependencies. Never copy Windows native modules to Linux.
-4. Build with resources appropriate to the host; small Pis may need swap and a single build worker.
+4. Prefer the verified Linux ARM64 artifact produced by CI for a small Raspberry Pi. Keep its matching Linux dependencies on the Pi. Building on the Pi is an alternative, but may need swap and a single build worker.
 5. Check a staged process on a spare loopback port against isolated data.
 6. Switch the service, retaining the real persistent database.
 7. Verify live health and login. Retain the previous release and backup for rollback.

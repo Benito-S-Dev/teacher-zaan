@@ -6,7 +6,10 @@ permissions:
   contents: read
 jobs:
   verify:
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [ubuntu-latest, ubuntu-24.04-arm]
+    runs-on: ${{ matrix.os }}
     timeout-minutes: 15
     env:
       NEXT_TELEMETRY_DISABLED: '1'
@@ -21,3 +24,12 @@ jobs:
       - run: npm run typecheck
       - run: npm run build
       - run: node tests/http-check.mjs
+      - name: Package Raspberry Pi build
+        if: matrix.os == 'ubuntu-24.04-arm'
+        run: tar --exclude=.next/cache -czf teacher-zaan-linux-arm64.tar.gz .next public package.json package-lock.json next.config.mjs
+      - uses: actions/upload-artifact@v4
+        if: matrix.os == 'ubuntu-24.04-arm'
+        with:
+          name: teacher-zaan-linux-arm64
+          path: teacher-zaan-linux-arm64.tar.gz
+          retention-days: 14

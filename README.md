@@ -51,6 +51,8 @@ node tests/http-check.mjs
 
 Tests use temporary/in-memory databases and fixed clocks. They cover start dates, normalized names, attendance corrections, billing boundaries, rescheduling, persistence, privacy, conflicts, authentication and migration. HTTP integration starts an isolated production server on port 3001. GitHub Actions runs these checks on pushes and pull requests.
 
+CI verifies both Linux x64 and ARM64. The ARM64 job publishes a release-build artifact for the Raspberry Pi; deployment remains a separate, deliberate operation.
+
 ## Engineering highlights
 
 | Challenge | Approach |
