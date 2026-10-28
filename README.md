@@ -6,6 +6,8 @@ Built for a working language teacher: visitors view availability and request les
 
 [Live public timetable](https://teacherzaan.com) · [Architecture](docs/ARCHITECTURE.md) · [Case study](docs/CASE_STUDY.md) · [Deployment guide](docs/DEPLOYMENT.md)
 
+![Public timetable — no student names are exposed](docs/images/public-timetable.png)
+
 ## Why this project exists
 
 A weekly plan does not show how many classes were delivered. Missed lessons, reschedules and different company billing periods make a simple slot count unreliable. This application separates the recurring plan from dated records, and attendance from chargeability.
